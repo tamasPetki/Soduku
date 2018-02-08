@@ -201,8 +201,8 @@ def enter_nums(empty, board):
 
 
 def delete_number(empty, board, sample):
-    sample = tuple(sample)
-    if sample in empty:
+    sample_coord = (sample[1], sample[0])
+    if sample_coord in empty:
         board[sample[1]][sample[0]] = "∙"
     else:
         os.system("clear")
