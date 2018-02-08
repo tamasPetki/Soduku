@@ -5,17 +5,23 @@ import datetime
 
 
 def createEmptyBoard():
+    """ Will call makeBoard constantly until a good table is not given """
     board = []
     sample = True
+
+    # Will pass this only if the table is complete and correct
     while sample:
         checker = makeBoard()
         if checker is not True:
             sample = False
             board = checker
+    
+    # Returns the complete random generated board
     return board
 
 
 def makeBoard():
+    """ Tries to create an empty board, if it can no be completed, throws it out """
 
     # Making the empty board
     board = []
@@ -81,36 +87,56 @@ def makeBoard():
 
 
 def printBoard(empty, board):
+    """ Prints the whole board out """
     os.system("clear")
+
+    # Starting frame
     print("\033[94m\033[1m    1 2 3   4 5 6   7 8 9 ")
     print("\033[93m\033[1m  ┌───────┬───────┬───────┐")
+
+    # Printing table elements
     for i in range(9):
         for j in range(9):
+
+            # First column starts with number and frame part
             if j == 0:
+
+                # Deciding if the number is original or not
                 if (i, j) not in empty:
                     print("\033[94m\033[1m" + str(i + 1) + "\033[93m\033[1m │ \033[91m\033[1m" + str(board[i][j]), end=" ")
                 else:
                     print("\033[94m\033[1m" + str(i + 1) + "\033[93m\033[1m │ \033[92m\033[1m" + str(board[i][j]), end=" ")
+
+            # Middle frame parts
             elif j == 2 or j == 5 or j == 8:
+
+                # Deciding if the number is original or not
                 if (i, j) not in empty:
                     print("\033[91m\033[1m" + str(board[i][j]), end="\033[93m\033[1m │ ")
                 else:
                     print("\033[92m\033[1m" + str(board[i][j]), end="\033[93m\033[1m │ ")
             else:
+
+                # Deciding if the number is original or not
                 if (i, j) not in empty:
                     print("\033[91m\033[1m" + str(board[i][j]), end=" ")
                 else:
                     print("\033[92m\033[1m" + str(board[i][j]), end=" ")
+
+        # Printing lines between 3x3 blocks
         if i == 2 or i == 5:
             print("\033[93m\033[1m\n  ├───────┼───────┼───────┤")
         else:
             print()
+    
+    # Ending frame
     print("\033[93m\033[1m  └───────┴───────┴───────┘")
     return None
 
 
 # Checks  for rows, cols and 3x3 blocks
 def checkRandom(sample):
+    """ Checks if the solution is good or not """
     total = 45
     sum = 0
 
@@ -153,40 +179,54 @@ def checkRandom(sample):
 
 
 def deleteRandom(board, difficulty=45):
+    """ Deletes elements based on difficulty from the gives filled out board """
     empty = []
     counter = 0
+
+    # Picking random numbers
     while counter < difficulty:
         x = random.randint(0, 8)
         y = random.randint(0, 8)
+
+        # Removing numbers
         if board[x][y] != "∙":
             board[x][y] = "∙"
+
+            # Making 2D tuple of numbers deleted here (by coordinates) for later use
             empty.append(tuple([x, y]))
             counter += 1
-    print(sorted(empty))
+
+    # Returns the partially deleted board, and the tuple with the coordinates
     return board, empty
 
 
 # Input
 def enter_nums(empty, board):
+    """ Handles the number input """
 
     # We save the numbers in a list
     try:
         num = [int(x) for x in input("\033[92m\033[1mEnter the numbers: ").strip(" ").split(" ")]
         print()
 
-        # The delete function
+        # If we want to delete from the board
         if len(num) == 2:
+            # Checking if conditions for it are good
             if num[0] < 10 and num[0] > 0 and num[1] < 10 and num[1] > 0:
                 num[0] -= 1
                 num[1] -= 1
+                # Calling delete function on the board
                 board = delete_number(empty, board, num)
             else:
                 print("\033[91m\033[1mWrong input!")
                 return enter_nums(empty, board)
+        # If we want to write to the board
         elif len(num) == 3:
+            # Checking if conditions for it are good
             if num[0] < 10 and num[0] > 0 and num[1] < 10 and num[1] > 0 and num[2] < 10 and num[2] > 0:
                 num[0] -= 1
                 num[1] -= 1
+                # Calling write function on the board
                 board = write(empty, board, num)
             else:
                 print("\033[91m\033[1mWrong input!")
@@ -201,7 +241,10 @@ def enter_nums(empty, board):
 
 
 def delete_number(empty, board, sample):
+    """ Deleting the given number (by coodrinates->sample) from the given table(board)
+    based on the deletable elements(empty) """
     sample_coord = (sample[1], sample[0])
+    # Checking if it is not an originally given number
     if sample_coord in empty:
         board[sample[1]][sample[0]] = "∙"
     else:
@@ -213,7 +256,10 @@ def delete_number(empty, board, sample):
 
 
 def write(empty, board, sample):
+    """ Writes to the given table(board) based on the coordinates (sample) given
+    based on the writeable elements(empty) """
     sample_coord = (sample[1], sample[0])
+    # Checking if it is not an originally given number
     if sample_coord in empty:
         board[sample[1]][sample[0]] = sample[2]
     else:
@@ -226,6 +272,7 @@ def write(empty, board, sample):
 
 # Checking if the board if full
 def checkEmpty(sample):
+    """ Checking if there is anymore blank spaces we can write to """
     for i in range(9):
         for j in range(9):
             if sample[i][j] == "∙":
@@ -236,12 +283,16 @@ def checkEmpty(sample):
 
 
 def startTimer():
+    """ Saves the time for the Score for later """
     return datetime.datetime.now()
 
 
 def endTimer(currentTime, difficulty):
+    """ Calculates the time spent on the puzzle, calculating score """
     ending = datetime.datetime.now()
+    # Total time spent in seconds
     final = (ending-currentTime).total_seconds()
+    # Calculating score based on time and difficulty
     if difficulty == 10:
         score = round(300 - final)
     elif difficulty == 55:
@@ -255,8 +306,10 @@ def endTimer(currentTime, difficulty):
 
 
 def startGame():
+    """ Main menu, describtion, rules, difficulty choosing """
     while True:
         try:
+            # Description, choosing difficulty
             os.system("clear")
             print("\033[94m\033[1mSUDOKU\n\nTo write into the board, enter 3 numbers: row(1-9), column(1-9), number(1-9).")
             print("To delete from the board, enter 2 numbers: row(1-9), column(1-9).")
@@ -265,6 +318,7 @@ def startGame():
             print("   Medium - 2")
             print("   Hard - 3")
             text = input().strip()
+            # Handling difficulty
             if text == "1":
                 return 10
             elif text == "2":
@@ -276,14 +330,20 @@ def startGame():
 
 
 def main():
+    """ Main function, soul of the program """
+    # Starting game, difficulty
     diff = startGame()
+    # Saving time
     startTime = startTimer()
+    # Creating and deleting from the table
     example = createEmptyBoard()
     example, empty_list = deleteRandom(example, diff)
     printBoard(empty_list, example)
+    # Entering numbers, checking if solution is good or bad
     while True:
         if checkEmpty(example):
             if checkRandom(example):
+                # Using highscore module to calculate highscore
                 highscore.highScoreProcess(endTimer(startTime, diff))
                 break
         example = enter_nums(empty_list, example)
