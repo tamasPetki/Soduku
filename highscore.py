@@ -4,7 +4,7 @@ import csv
 def highScoreProcess(score):
     highscorelist = openHighscore()
     if checkHighscore(score, highscorelist) or len(highscorelist) == 0:
-        name = highScore()
+        name = highScore(score)
         modified_scorelist = addNewScore(score, name, highscorelist)
         printHighscore(modified_scorelist)
         writeHighscore(modified_scorelist)
@@ -14,8 +14,8 @@ def highScoreProcess(score):
     return
 
 
-def highScore():
-    name = input("You are in the TOP 10! What's your name? : ")
+def highScore(score):
+    name = input("You are in the TOP 10! YOUR SCORE: {0} What's your name? : ".format(score))
     return name
 
 

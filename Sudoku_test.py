@@ -301,7 +301,6 @@ def endTimer(currentTime, difficulty):
         score = round(1200 - final)
     if score < 0:
         score = 0
-    print(score)
     return score
 
 
